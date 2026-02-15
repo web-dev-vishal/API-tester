@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal API Key Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 32px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #718096;
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .security-notice {
+            background: #edf2f7;
+            border-left: 4px solid #4299e1;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #2d3748;
+        }
+
+        .security-notice strong {
+            color: #2b6cb0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .toggle-visibility {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            color: #718096;
+            font-size: 18px;
+            line-height: 1;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toggle-visibility:hover {
+            color: #2d3748;
+        }
+
+        .validation-feedback {
+            margin-top: 8px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .validation-feedback.success {
+            color: #38a169;
+        }
+
+        .validation-feedback.warning {
+            color: #d69e2e;
+        }
+
+        .provider-info {
+            background: #f7fafc;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .provider-info a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .provider-info a:hover {
+            text-decoration: underline;
+        }
+
+        .test-button {
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .test-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .test-button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .test-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .result-card {
+            margin-top: 24px;
+            padding: 20px;
+            border-radius: 12px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .result-card.success {
+            background: linear-gradient(135deg, #d4f4dd 0%, #c6f6d5 100%);
+            border: 2px solid #38a169;
+        }
+
+        .result-card.error {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            border: 2px solid #e53e3e;
+        }
+
+        .result-card.warning {
+            background: linear-gradient(135deg, #feebc8 0%, #fbd38d 100%);
+            border: 2px solid #d69e2e;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .result-icon {
+            font-size: 32px;
+        }
+
+        .result-title {
+            font-size: 20px;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .result-card.success .result-title {
+            color: #22543d;
+        }
+
+        .result-card.error .result-title {
+            color: #742a2a;
+        }
+
+        .result-card.warning .result-title {
+            color: #7c2d12;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.active {
+            background: #38a169;
+            color: white;
+        }
+
+        .status-badge.inactive {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .result-details {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .result-card.success .result-details {
+            color: #22543d;
+        }
+
+        .result-card.error .result-details {
+            color: #742a2a;
+        }
+
+        .result-card.warning .result-details {
+            color: #7c2d12;
+        }
+
+        .detail-row {
+            margin-bottom: 12px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            min-width: 100px;
+        }
+
+        .detail-value {
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin-top: 8px;
+            overflow-x: auto;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .detail-label {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🔑 Universal API Key Tester</h1>
+            <p class="subtitle">Test API keys from 10+ AI providers instantly</p>
+
+            <div class="security-notice">
+                <strong>🔒 Privacy First:</strong> Your API key is sent directly to the provider's API and is never stored, logged, or transmitted to any third-party server.
+            </div>
+
+            <form id="testerForm">
+                <div class="form-group">
+                    <label for="provider">Select AI Provider</label>
+                    <select id="provider" required>
+                        <option value="">Choose a provider...</option>
+                        <option value="openai">OpenAI (GPT-4, GPT-3.5)</option>
+                        <option value="anthropic">Anthropic (Claude)</option>
+                        <option value="google">Google AI (Gemini)</option>
+                        <option value="groq">Groq (Fast Inference)</option>
+                        <option value="openrouter">OpenRouter (Multi-Provider)</option>
+                        <option value="cohere">Cohere</option>
+                        <option value="mistral">Mistral AI</option>
+                        <option value="perplexity">Perplexity AI</option>
+                        <option value="together">Together AI</option>
+                        <option value="huggingface">Hugging Face</option>
+                    </select>
+                    <div id="providerInfo"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="apiKey">API Key</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="password" 
+                            id="apiKey" 
+                            placeholder="Enter your API key..." 
+                            required
+                            autocomplete="off"
+                        >
+                        <button type="button" class="toggle-visibility" id="toggleVisibility" title="Show/Hide API Key">
+                            👁️
+                        </button>
+                    </div>
+                    <div id="validationFeedback"></div>
+                </div>
+
+                <button type="submit" class="test-button" id="testButton">
+                    Test API Key
+                </button>
+            </form>
+
+            <div id="resultContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // Provider configurations
+        const providers = {
+            openai: {
+                name: 'OpenAI',
+                url: 'https://api.openai.com/v1/chat/completions',
+                placeholder: 'sk-proj-xxx... or sk-xxx...',
+                info: `<strong>Testing:</strong> Sends a simple chat completion request.<br>
+                       <strong>Get Key:</strong> <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a>`,
+                validateKey: (key) => /^sk-(proj-)?[a-zA-Z0-9]{20,}/.test(key),
+                headers: (key) => ({
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${key}`
+                }),
+                body: {
+                    model: 'gpt-3.5-turbo',
+                    messages: [{ role: 'user', content: 'Say "API key is valid"' }],
+                    max_tokens: 10
+                },
+                parseSuccess: (data) => ({
+                    model: data.model,
+                    response: data.choices?.[0]?.message?.content || 'No response',
+                    tokens: data.usage ? `${data.usage.prompt_tokens} input + ${data.usage.completion_tokens} output = ${data.usage.total_tokens} total` : 'N/A'
+                }),
+                corsNote: false
+            },
+            anthropic: {
+                name: 'Anthropic',
+                url: 'https://api.anthropic.com/v1/messages',
+                placeholder: 'sk-ant-api03-xxx...',
+                info: `<strong>Testing:</strong> Sends a message to Claude.<br>
+                       <strong>Get Key:</strong> <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com/settings/keys</a>`,
+                validateKey: (key) => /^sk-ant-api03-[a-zA-Z0-9_-]{95,}/.test(key),
+                headers: (key) => ({
+                    'Content-Type': 'application/json',
+                    'x-api-key': key,
+                    'anthropic-version': '2023-06-01'
+                }),
+                body: {
+                    model: 'claude-3-haiku-20240307',
+                    max_tokens: 10,
+                    messages: [{ role: 'user', content: 'Say "API key is valid"' }]
+                },
+                parseSuccess: (data) => ({
+                    model: data.model,
+                    response: data.content?.[0]?.text || 'No response',
+                    tokens: data.usage ? `${data.usage.input_tokens} input + ${data.usage.output_tokens} output` : 'N/A',
+                    stopReason: data.stop_reason
+                }),
+                corsNote: false
+            },
+            google: {
+                name: 'Google AI',
+                url: (key) => `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${key}`,
+                placeholder: 'AIzaSyXxx...',
+                info: `<strong>Testing:</strong> Generates content with Gemini Pro.<br>
+                       <strong>Get Key:</strong> <a href="https://makersuite.google.com/app/apikey" target="_blank">makersuite.google.com/app/apikey</a>`,
+                validateKey: (key) => /^AIza[a-zA-Z0-9_-]{35}/.test(key),
+                headers: (key) => ({
+                    'Content-Type': 'application/json'
+                }),
+                body: {
+                    contents: [{ parts: [{ text: 'Say "API key is valid"' }] }]
+                },
+                parseSuccess: (data) => ({
+                    model: 'gemini-pro',
+                    response: data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response',
+                    tokens: data.usageMetadata ? `${data.usageMetadata.promptTokenCount} input + ${data.usageMetadata.candidatesTokenCount} output = ${data.usageMetadata.totalTokenCount} total` : 'N/A'
+                }),
+                corsNote: false
+            },
+            groq: {
+                name: 'Groq',
+                url: 'https://api.groq.com/openai/v1/chat/completions',
+                placeholder: 'gsk_xxx...',
+                info: `<strong>Testing:</strong> Fast inference with Llama or Mixtral.<br>
+                       <strong>Get Key:</strong> <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a>`,
+                validateKey: (key) => /^gsk_[a-zA-Z0-9]{52}/.test(key),
+                headers: (key) => ({
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${key}`
+                }),
+                body: {
+                    model: 'llama3-8b-8192',
+                    messages: [{ role: 'user', content: 'Say "API key is valid"' }],
+                    max_tokens: 10
+                },
+                parseSuccess: (data) => ({
+                    model: data.model,
+                    response: data.choices?.[0]?.message?.content || 'No response',
+                    tokens: data.usage ? `${data.usage.prompt_tokens} input + ${data.usage.completion_tokens} output = ${data.usage.total_tokens} total` : 'N/A'
+                }),
+                corsNote: false
+            },
+            openrouter: {
+                name: 'OpenRouter',
+                url: 'https://openrouter.ai/api/v1/chat/completions',
+                placeholder: 'sk-or-v1-xxx...',
+                info: `<strong>Testing:</strong> Routes to multiple AI providers.<br>
+                       <strong>Get Key:</strong> <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>`,
+                validateKey: (key) => /^sk-or-v1-[a-zA-Z0-9]{64,}/.test(key),
+                headers: (key) => ({
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${key}`,
+                    'HTTP-Referer': window.location.href,
+                    'X-Title': 'API Key Tester'
+                }),
+                body: {
+                    model: 'openai/gpt-3.5-turbo',
+                    messages: [{ role: 'user', content: 'Say "API key is valid"' }],
+                    max_tokens: 10
+                },
+                parseSuccess: (data) => ({
+                    model: data.model,
+                    response: data.choices?.[0]?.message?.content || 'No response',
+                    tokens: data.usage ? `${data.usage.prompt_tokens} input + ${data.usage.completion_tokens} output = ${data.usage.total_tokens} total` : 'N/A'
+                }),
+                corsNote: false
+            },
+            cohere: {
+                name: 'Cohere',
+                url: 'https://api.cohere.ai/v1/generate',
+                placeholder: 'Enter your Cohere API key',
+                info: `<strong>Testing:</strong> Text generation with Cohere models.<br>
+                       <strong>Get Key:</strong> <a href="https://dashboard.cohere.com/api-keys" target="_blank">dashboard.cohere.com/api-keys</a>`,
+                validateKey: (key) => key.length > 20,
+                headers: (key) => ({
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${key}`
+                }),
+                body: {
+                    prompt: 'Say "API key is valid"',
+                    max_tokens: 10
+                },
+                parseSuccess: (data) => ({
+                    model: 'command',
+                    response: data.generations?.[0]?.text || 'No response',
+                    tokens: 'N/A'
+                }),
+                corsNote: true
+            },
+            mistral: {
+                name: 'Mistral AI',
+                url: 'https://api.mistral.ai/v1/chat/completions',
+                placeholder: 'Enter your Mistral API key',
+                info: `<strong>Testing:</strong> Chat completion with Mistral models.<br>
+                       <strong>Get Key:</strong> <a href="https://console.mistral.ai/api-keys" target="_blank">console.mistral.ai/api-keys</a>`,
+                validateKey: (key) => key.length > 20,
+                headers: (key) => ({
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${key}`
+                }),
+                body: {
+                    model: 'mistral-tiny',
+                    messages: [{ role: 'user', content: 'Say "API key is valid"' }],
+                    max_tokens: 10
+                },
+                parseSuccess: (data) => ({
+                    model: data.model,
+                    response: data.choices?.[0]?.message?.content || 'No response',
+                    tokens: data.usage ? `${data.usage.prompt_tokens} input + ${data.usage.completion_tokens} output = ${data.usage.total_tokens} total` : 'N/A'
+                }),
+                corsNote: false
+            },
+            perplexity: {
+                name: 'Perplexity AI',
+                url: 'https://api.perplexity.ai/chat/completions',
+                placeholder: 'pplx-xxx...',
+                info: `<strong>Testing:</strong> Chat completion with online models.<br>
+                       <strong>Get Key:</strong> <a href="https://www.perplexity.ai/settings/api" target="_blank">perplexity.ai/settings/api</a>`,
+                validateKey: (key) => /^pplx-[a-zA-Z0-9]{40,}/.test(key),
+                headers: (key) => ({
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${key}`
+                }),
+                body: {
+                    model: 'llama-3.1-sonar-small-128k-online',
+                    messages: [{ role: 'user', content: 'Say "API key is valid"' }],
+                    max_tokens: 10
+                },
+                parseSuccess: (data) => ({
+                    model: data.model,
+                    response: data.choices?.[0]?.message?.content || 'No response',
+                    tokens: data.usage ? `${data.usage.prompt_tokens} input + ${data.usage.completion_tokens} output = ${data.usage.total_tokens} total` : 'N/A'
+                }),
+                corsNote: false
+            },
+            together: {
+                name: 'Together AI',
+                url: 'https://api.together.xyz/v1/chat/completions',
+                placeholder: 'Enter your Together AI key',
+                info: `<strong>Testing:</strong> Fast inference with open models.<br>
+                       <strong>Get Key:</strong> <a href="https://api.together.xyz/settings/api-keys" target="_blank">api.together.xyz/settings/api-keys</a>`,
+                validateKey: (key) => key.length > 30,
+                headers: (key) => ({
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${key}`
+                }),
+                body: {
+                    model: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
+                    messages: [{ role: 'user', content: 'Say "API key is valid"' }],
+                    max_tokens: 10
+                },
+                parseSuccess: (data) => ({
+                    model: data.model,
+                    response: data.choices?.[0]?.message?.content || 'No response',
+                    tokens: data.usage ? `${data.usage.prompt_tokens} input + ${data.usage.completion_tokens} output = ${data.usage.total_tokens} total` : 'N/A'
+                }),
+                corsNote: false
+            },
+            huggingface: {
+                name: 'Hugging Face',
+                url: 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium',
+                placeholder: 'hf_xxx...',
+                info: `<strong>Testing:</strong> Text generation with inference API.<br>
+                       <strong>Get Key:</strong> <a href="https://huggingface.co/settings/tokens" target="_blank">huggingface.co/settings/tokens</a>`,
+                validateKey: (key) => /^hf_[a-zA-Z0-9]{30,}/.test(key),
+                headers: (key) => ({
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${key}`
+                }),
+                body: {
+                    inputs: 'Say "API key is valid"',
+                    parameters: { max_new_tokens: 10 }
+                },
+                parseSuccess: (data) => ({
+                    model: 'microsoft/DialoGPT-medium',
+                    response: Array.isArray(data) ? (data[0]?.generated_text || 'No response') : 'No response',
+                    tokens: 'N/A'
+                }),
+                corsNote: true
+            }
+        };
+
+        // DOM elements
+        const providerSelect = document.getElementById('provider');
+        const apiKeyInput = document.getElementById('apiKey');
+        const toggleVisibilityBtn = document.getElementById('toggleVisibility');
+        const validationFeedback = document.getElementById('validationFeedback');
+        const providerInfo = document.getElementById('providerInfo');
+        const testButton = document.getElementById('testButton');
+        const resultContainer = document.getElementById('resultContainer');
+        const form = document.getElementById('testerForm');
+
+        // Utility function to escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Toggle password visibility
+        toggleVisibilityBtn.addEventListener('click', () => {
+            const type = apiKeyInput.type === 'password' ? 'text' : 'password';
+            apiKeyInput.type = type;
+            toggleVisibilityBtn.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
+        // Provider change handler
+        providerSelect.addEventListener('change', (e) => {
+            const providerKey = e.target.value;
+            apiKeyInput.value = '';
+            validationFeedback.innerHTML = '';
+            resultContainer.innerHTML = '';
+            
+            if (providerKey && providers[providerKey]) {
+                const provider = providers[providerKey];
+                apiKeyInput.placeholder = provider.placeholder;
+                providerInfo.innerHTML = `<div class="provider-info">${provider.info}</div>`;
+            } else {
+                apiKeyInput.placeholder = 'Enter your API key...';
+                providerInfo.innerHTML = '';
+            }
+        });
+
+        // Real-time validation
+        apiKeyInput.addEventListener('input', () => {
+            const providerKey = providerSelect.value;
+            const apiKey = apiKeyInput.value.trim();
+            
+            if (!providerKey || !apiKey) {
+                validationFeedback.innerHTML = '';
+                return;
+            }
+
+            const provider = providers[providerKey];
+            const isValid = provider.validateKey(apiKey);
+
+            if (isValid) {
+                validationFeedback.innerHTML = `
+                    <div class="validation-feedback success">
+                        ✅ Format looks correct
+                    </div>
+                `;
+            } else {
+                validationFeedback.innerHTML = `
+                    <div class="validation-feedback warning">
+                        ⚠️ Format doesn't match expected pattern
+                    </div>
+                `;
+            }
+        });
+
+        // Show success result
+        function showSuccess(providerName, details) {
+            resultContainer.innerHTML = `
+                <div class="result-card success">
+                    <div class="result-header">
+                        <span class="result-icon">✅</span>
+                        <span class="result-title">${providerName}</span>
+                        <span class="status-badge active">Active & Working</span>
+                    </div>
+                    <div class="result-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Status:</span>
+                            <span class="detail-value">✅ API Key is valid and working!</span>
+                        </div>
+                        ${details.model ? `
+                        <div class="detail-row">
+                            <span class="detail-label">Model:</span>
+                            <span class="detail-value">${escapeHtml(details.model)}</span>
+                        </div>
+                        ` : ''}
+                        ${details.response ? `
+                        <div class="detail-row">
+                            <span class="detail-label">Response:</span>
+                            <span class="detail-value">${escapeHtml(details.response)}</span>
+                        </div>
+                        ` : ''}
+                        ${details.tokens ? `
+                        <div class="detail-row">
+                            <span class="detail-label">Tokens:</span>
+                            <span class="detail-value">${escapeHtml(details.tokens)}</span>
+                        </div>
+                        ` : ''}
+                        ${details.stopReason ? `
+                        <div class="detail-row">
+                            <span class="detail-label">Stop Reason:</span>
+                            <span class="detail-value">${escapeHtml(details.stopReason)}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Show error result
+        function showError(providerName, errorType, details) {
+            resultContainer.innerHTML = `
+                <div class="result-card error">
+                    <div class="result-header">
+                        <span class="result-icon">❌</span>
+                        <span class="result-title">${providerName}</span>
+                        <span class="status-badge inactive">Not Working</span>
+                    </div>
+                    <div class="result-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Error Type:</span>
+                            <span class="detail-value">${escapeHtml(errorType)}</span>
+                        </div>
+                        ${details.status ? `
+                        <div class="detail-row">
+                            <span class="detail-label">Status Code:</span>
+                            <span class="detail-value">${escapeHtml(details.status)}</span>
+                        </div>
+                        ` : ''}
+                        ${details.message ? `
+                        <div class="detail-row">
+                            <span class="detail-label">Message:</span>
+                            <span class="detail-value">${escapeHtml(details.message)}</span>
+                        </div>
+                        ` : ''}
+                        ${details.nextSteps ? `
+                        <div class="detail-row">
+                            <span class="detail-label">Next Steps:</span>
+                            <span class="detail-value">${details.nextSteps}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Show warning result
+        function showWarning(providerName, message, details) {
+            resultContainer.innerHTML = `
+                <div class="result-card warning">
+                    <div class="result-header">
+                        <span class="result-icon">⚠️</span>
+                        <span class="result-title">${providerName}</span>
+                    </div>
+                    <div class="result-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Warning:</span>
+                            <span class="detail-value">${message}</span>
+                        </div>
+                        ${details ? `
+                        <div class="detail-row">
+                            <span class="detail-value">${details}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Test API key
+        async function testApiKey(providerKey, apiKey) {
+            const provider = providers[providerKey];
+            const url = typeof provider.url === 'function' ? provider.url(apiKey) : provider.url;
+            const headers = provider.headers(apiKey);
+            const body = provider.body;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(body)
+                });
+
+                const data = await response.json();
+
+                // Handle successful response
+                if (response.ok) {
+                    const details = provider.parseSuccess(data);
+                    showSuccess(provider.name, details);
+                    return;
+                }
+
+                // Handle error responses
+                let errorType = 'Unknown Error';
+                let errorDetails = {
+                    status: response.status,
+                    message: data.error?.message || data.message || JSON.stringify(data).substring(0, 200),
+                    nextSteps: ''
+                };
+
+                if (response.status === 401) {
+                    errorType = 'Invalid or Unauthorized API Key';
+                    errorDetails.nextSteps = 'Please check that your API key is correct and has not expired.';
+                } else if (response.status === 403) {
+                    errorType = 'Permission Denied';
+                    errorDetails.nextSteps = 'Your API key may not have permission to access this endpoint. Check your account settings.';
+                } else if (response.status === 404) {
+                    errorType = 'Endpoint Not Found';
+                    errorDetails.nextSteps = 'The API endpoint may have changed. Please report this issue.';
+                } else if (response.status === 429) {
+                    errorType = 'Rate Limit or Quota Exceeded';
+                    errorDetails.nextSteps = 'You have exceeded your rate limit or quota. Wait a moment and try again, or upgrade your plan.';
+                } else if (response.status >= 500) {
+                    errorType = 'Server Error';
+                    errorDetails.nextSteps = `${provider.name} is experiencing server issues. Try again later.`;
+                } else {
+                    errorType = `HTTP ${response.status} Error`;
+                }
+
+                showError(provider.name, errorType, errorDetails);
+
+            } catch (error) {
+                // Handle network errors and CORS issues
+                if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                    if (provider.corsNote) {
+                        showWarning(
+                            provider.name,
+                            'CORS Error Detected',
+                            `This API doesn't allow direct browser requests due to CORS (Cross-Origin Resource Sharing) restrictions. Your API key may still be valid, but it can only be tested from a server environment or with a CORS proxy. The key format appears ${apiKeyInput.value.trim() && provider.validateKey(apiKeyInput.value.trim()) ? 'correct' : 'incorrect'}.`
+                        );
+                    } else {
+                        showError(provider.name, 'Network Error', {
+                            message: error.message,
+                            nextSteps: 'Check your internet connection or try again later. This could also be a CORS issue.'
+                        });
+                    }
+                } else {
+                    showError(provider.name, 'Request Failed', {
+                        message: error.message,
+                        nextSteps: 'An unexpected error occurred. Please try again.'
+                    });
+                }
+            }
+        }
+
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const providerKey = providerSelect.value;
+            const apiKey = apiKeyInput.value.trim();
+
+            if (!providerKey || !apiKey) {
+                return;
+            }
+
+            // Disable button and show loading state
+            testButton.disabled = true;
+            testButton.innerHTML = '<div class="spinner"></div> Testing...';
+            resultContainer.innerHTML = '';
+
+            try {
+                await testApiKey(providerKey, apiKey);
+            } finally {
+                // Re-enable button
+                testButton.disabled = false;
+                testButton.innerHTML = 'Test API Key';
+            }
+        });
+
+        // Allow Enter key to submit
+        apiKeyInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                form.dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>
