@@ -3,427 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal API Key Tester</title>
+    <title>Universal API Key Tester | Secure Validation Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
-
-        .container {
-            width: 100%;
-            max-width: 700px;
-            animation: slideIn 0.5s ease-out;
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(255, 255, 255, 0.1);
         }
-
-        .card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 32px;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            color: #2d3748;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        .subtitle {
-            color: #718096;
-            text-align: center;
-            margin-bottom: 24px;
-            font-size: 14px;
-        }
-
-        .security-notice {
-            background: #edf2f7;
-            border-left: 4px solid #4299e1;
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 24px;
-            font-size: 13px;
-            color: #2d3748;
-        }
-
-        .security-notice strong {
-            color: #2b6cb0;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            color: #2d3748;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        select, input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-
-        select:focus, input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .toggle-visibility {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-            color: #718096;
-            font-size: 18px;
-            line-height: 1;
-            min-width: 44px;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .toggle-visibility:hover {
-            color: #2d3748;
-        }
-
-        .validation-feedback {
-            margin-top: 8px;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .validation-feedback.success {
-            color: #38a169;
-        }
-
-        .validation-feedback.warning {
-            color: #d69e2e;
-        }
-
-        .provider-info {
-            background: #f7fafc;
-            border-radius: 6px;
-            padding: 12px;
-            margin-top: 8px;
-            font-size: 13px;
-            color: #4a5568;
-            line-height: 1.6;
-        }
-
-        .provider-info a {
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .provider-info a:hover {
-            text-decoration: underline;
-        }
-
-        .test-button {
-            width: 100%;
-            padding: 14px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .test-button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .test-button:active:not(:disabled) {
-            transform: translateY(0);
-        }
-
-        .test-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
+        
         .spinner {
-            width: 18px;
-            height: 18px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+            animation: spin 1s linear infinite;
         }
-
+        
         @keyframes spin {
+            from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-
-        .result-card {
-            margin-top: 24px;
-            padding: 20px;
-            border-radius: 12px;
-            animation: slideIn 0.5s ease-out;
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
         }
-
-        .result-card.success {
-            background: linear-gradient(135deg, #d4f4dd 0%, #c6f6d5 100%);
-            border: 2px solid #38a169;
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .result-card.error {
-            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
-            border: 2px solid #e53e3e;
+        
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
         }
-
-        .result-card.warning {
-            background: linear-gradient(135deg, #feebc8 0%, #fbd38d 100%);
-            border: 2px solid #d69e2e;
+        
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
         }
-
-        .result-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
+        
+        .provider-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
         }
-
-        .result-icon {
-            font-size: 32px;
-        }
-
-        .result-title {
-            font-size: 20px;
-            font-weight: 700;
-            flex: 1;
-        }
-
-        .result-card.success .result-title {
-            color: #22543d;
-        }
-
-        .result-card.error .result-title {
-            color: #742a2a;
-        }
-
-        .result-card.warning .result-title {
-            color: #7c2d12;
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-badge.active {
-            background: #38a169;
-            color: white;
-        }
-
-        .status-badge.inactive {
-            background: #e53e3e;
-            color: white;
-        }
-
-        .result-details {
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 8px;
-            padding: 16px;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .result-card.success .result-details {
-            color: #22543d;
-        }
-
-        .result-card.error .result-details {
-            color: #742a2a;
-        }
-
-        .result-card.warning .result-details {
-            color: #7c2d12;
-        }
-
-        .detail-row {
-            margin-bottom: 12px;
-            display: flex;
-            gap: 8px;
-        }
-
-        .detail-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .detail-label {
-            font-weight: 600;
-            min-width: 100px;
-        }
-
-        .detail-value {
-            flex: 1;
-            word-break: break-word;
-        }
-
+        
         .code-block {
-            background: rgba(0, 0, 0, 0.1);
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            margin-top: 8px;
-            overflow-x: auto;
+            font-family: 'Courier New', 'Monaco', 'Consolas', monospace;
+            word-break: break-all;
         }
-
-        @media (max-width: 640px) {
-            body {
-                padding: 12px;
-            }
-
-            .card {
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
-            .detail-row {
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            .detail-label {
-                min-width: auto;
-            }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="card">
-            <h1>🔑 Universal API Key Tester</h1>
-            <p class="subtitle">Test API keys from 10+ AI providers instantly</p>
-
-            <div class="security-notice">
-                <strong>🔒 Privacy First:</strong> Your API key is sent directly to the provider's API and is never stored, logged, or transmitted to any third-party server.
-            </div>
-
-            <form id="testerForm">
-                <div class="form-group">
-                    <label for="provider">Select AI Provider</label>
-                    <select id="provider" required>
-                        <option value="">Choose a provider...</option>
-                        <option value="openai">OpenAI (GPT-4, GPT-3.5)</option>
-                        <option value="anthropic">Anthropic (Claude)</option>
-                        <option value="google">Google AI (Gemini)</option>
-                        <option value="groq">Groq (Fast Inference)</option>
-                        <option value="openrouter">OpenRouter (Multi-Provider)</option>
-                        <option value="cohere">Cohere</option>
-                        <option value="mistral">Mistral AI</option>
-                        <option value="perplexity">Perplexity AI</option>
-                        <option value="together">Together AI</option>
-                        <option value="huggingface">Hugging Face</option>
-                    </select>
-                    <div id="providerInfo"></div>
+<body class="antialiased p-4 md:p-8">
+    <div class="max-w-2xl mx-auto">
+        <!-- Header Card -->
+        <div class="glass-card rounded-2xl shadow-2xl p-6 md:p-8 mb-6 transform transition-all duration-300 hover:shadow-3xl">
+            <div class="flex items-center justify-center mb-4">
+                <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-full shadow-lg">
+                    <i data-lucide="key-round" class="w-8 h-8 text-white"></i>
                 </div>
-
-                <div class="form-group">
-                    <label for="apiKey">API Key</label>
-                    <div class="input-wrapper">
+            </div>
+            
+            <h1 class="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-2">
+                Universal API Key Tester
+            </h1>
+            <p class="text-center text-gray-600 mb-6 text-sm md:text-base">
+                Validate API keys from 10+ AI providers securely
+            </p>
+            
+            <!-- Security Notice -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mb-6">
+                <div class="flex items-start">
+                    <i data-lucide="shield-check" class="w-5 h-5 text-blue-500 mr-3 flex-shrink-0 mt-0.5"></i>
+                    <div>
+                        <h3 class="font-semibold text-blue-900 text-sm">Privacy First Architecture</h3>
+                        <p class="text-blue-800 text-xs mt-1 leading-relaxed">
+                            Your API key is sent directly to the provider's API from your browser. 
+                            Keys are never stored, logged, or transmitted to third-party servers.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CORS Warning Notice -->
+            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg mb-6">
+                <div class="flex items-start">
+                    <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 mr-3 flex-shrink-0 mt-0.5"></i>
+                    <div>
+                        <h3 class="font-semibold text-amber-900 text-sm">Browser CORS Limitation</h3>
+                        <p class="text-amber-800 text-xs mt-1 leading-relaxed">
+                            Most AI providers block direct browser requests (CORS policy). 
+                            <strong>Failed tests don't always mean invalid keys</strong> — they often require a backend proxy. 
+                            Use this tool for format validation and basic connectivity checks.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Form -->
+            <form id="testerForm" class="space-y-5">
+                <!-- Provider Selection -->
+                <div class="space-y-2">
+                    <label for="provider" class="block text-sm font-semibold text-gray-700">
+                        Select AI Provider
+                    </label>
+                    <div class="relative">
+                        <select 
+                            id="provider" 
+                            required
+                            class="provider-select w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-700 font-medium"
+                        >
+                            <option value="">Choose a provider...</option>
+                            <option value="openai">OpenAI (GPT-4, GPT-3.5)</option>
+                            <option value="anthropic">Anthropic (Claude)</option>
+                            <option value="google">Google AI (Gemini)</option>
+                            <option value="groq">Groq (Fast Inference)</option>
+                            <option value="openrouter">OpenRouter (Multi-Provider)</option>
+                            <option value="cohere">Cohere</option>
+                            <option value="mistral">Mistral AI</option>
+                            <option value="perplexity">Perplexity AI</option>
+                            <option value="together">Together AI</option>
+                            <option value="huggingface">Hugging Face</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Provider Info Box -->
+                    <div id="providerInfo" class="hidden bg-gray-50 rounded-lg p-3 text-sm text-gray-600 border border-gray-200">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+                
+                <!-- API Key Input -->
+                <div class="space-y-2">
+                    <label for="apiKey" class="block text-sm font-semibold text-gray-700">
+                        API Key
+                    </label>
+                    <div class="relative">
                         <input 
                             type="password" 
                             id="apiKey" 
                             placeholder="Enter your API key..." 
                             required
                             autocomplete="off"
+                            autocapitalize="off"
+                            spellcheck="false"
+                            class="w-full px-4 py-3 pr-12 bg-white border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-700 font-mono text-sm"
                         >
-                        <button type="button" class="toggle-visibility" id="toggleVisibility" title="Show/Hide API Key">
-                            👁️
+                        <button 
+                            type="button" 
+                            id="toggleVisibility" 
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-lg hover:bg-gray-100"
+                            title="Toggle visibility"
+                        >
+                            <i data-lucide="eye" class="w-5 h-5"></i>
                         </button>
                     </div>
-                    <div id="validationFeedback"></div>
+                    
+                    <!-- Validation Feedback -->
+                    <div id="validationFeedback" class="hidden text-sm font-medium"></div>
+                    
+                    <!-- Key Format Hint -->
+                    <div id="keyFormatHint" class="text-xs text-gray-500 mt-1 hidden">
+                        Expected format: <span class="font-mono bg-gray-100 px-1 rounded"></span>
+                    </div>
                 </div>
-
-                <button type="submit" class="test-button" id="testButton">
-                    Test API Key
+                
+                <!-- Test Button -->
+                <button 
+                    type="submit" 
+                    id="testButton"
+                    class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                >
+                    <i data-lucide="check-circle" class="w-5 h-5"></i>
+                    <span>Test API Key</span>
                 </button>
             </form>
-
-            <div id="resultContainer"></div>
+            
+            <!-- Results Container -->
+            <div id="resultContainer" class="mt-6 space-y-4"></div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="text-center text-white/80 text-xs space-y-2">
+            <p>Always keep your API keys secure and never commit them to public repositories.</p>
+            <p class="text-white/60">© 2024 Universal API Key Tester • Client-side only tool</p>
         </div>
     </div>
+    
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
 
     <script>
-        // Provider configurations
+        // Provider configurations with updated endpoints and validation
         const providers = {
             openai: {
                 name: 'OpenAI',
                 url: 'https://api.openai.com/v1/chat/completions',
                 placeholder: 'sk-proj-xxx... or sk-xxx...',
-                info: `<strong>Testing:</strong> Sends a simple chat completion request.<br>
-                       <strong>Get Key:</strong> <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a>`,
+                formatHint: 'sk-proj-... or sk-... (starts with sk-)',
+                info: {
+                    description: 'Tests with a simple chat completion request',
+                    docs: 'https://platform.openai.com/api-keys',
+                    model: 'gpt-3.5-turbo'
+                },
                 validateKey: (key) => /^sk-(proj-)?[a-zA-Z0-9]{20,}/.test(key),
                 headers: (key) => ({
                     'Content-Type': 'application/json',
@@ -431,22 +248,26 @@
                 }),
                 body: {
                     model: 'gpt-3.5-turbo',
-                    messages: [{ role: 'user', content: 'Say "API key is valid"' }],
-                    max_tokens: 10
+                    messages: [{ role: 'user', content: 'Say "Valid" and nothing else' }],
+                    max_tokens: 5
                 },
                 parseSuccess: (data) => ({
                     model: data.model,
-                    response: data.choices?.[0]?.message?.content || 'No response',
-                    tokens: data.usage ? `${data.usage.prompt_tokens} input + ${data.usage.completion_tokens} output = ${data.usage.total_tokens} total` : 'N/A'
+                    response: data.choices?.[0]?.message?.content?.trim() || 'No content',
+                    tokens: data.usage ? `Prompt: ${data.usage.prompt_tokens} | Completion: ${data.usage.completion_tokens} | Total: ${data.usage.total_tokens}` : 'N/A'
                 }),
-                corsNote: false
+                hasCors: false
             },
             anthropic: {
                 name: 'Anthropic',
                 url: 'https://api.anthropic.com/v1/messages',
                 placeholder: 'sk-ant-api03-xxx...',
-                info: `<strong>Testing:</strong> Sends a message to Claude.<br>
-                       <strong>Get Key:</strong> <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com/settings/keys</a>`,
+                formatHint: 'sk-ant-api03-... (96+ characters)',
+                info: {
+                    description: 'Sends a message to Claude API',
+                    docs: 'https://console.anthropic.com/settings/keys',
+                    model: 'claude-3-haiku-20240307'
+                },
                 validateKey: (key) => /^sk-ant-api03-[a-zA-Z0-9_-]{95,}/.test(key),
                 headers: (key) => ({
                     'Content-Type': 'application/json',
@@ -455,370 +276,491 @@
                 }),
                 body: {
                     model: 'claude-3-haiku-20240307',
-                    max_tokens: 10,
-                    messages: [{ role: 'user', content: 'Say "API key is valid"' }]
+                    max_tokens: 5,
+                    messages: [{ role: 'user', content: 'Say "Valid"' }]
                 },
                 parseSuccess: (data) => ({
                     model: data.model,
-                    response: data.content?.[0]?.text || 'No response',
-                    tokens: data.usage ? `${data.usage.input_tokens} input + ${data.usage.output_tokens} output` : 'N/A',
+                    response: data.content?.[0]?.text?.trim() || 'No content',
+                    tokens: data.usage ? `Input: ${data.usage.input_tokens} | Output: ${data.usage.output_tokens}` : 'N/A',
                     stopReason: data.stop_reason
                 }),
-                corsNote: false
+                hasCors: false
             },
             google: {
-                name: 'Google AI',
-                url: (key) => `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${key}`,
+                name: 'Google AI (Gemini)',
+                url: (key) => `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
                 placeholder: 'AIzaSyXxx...',
-                info: `<strong>Testing:</strong> Generates content with Gemini Pro.<br>
-                       <strong>Get Key:</strong> <a href="https://makersuite.google.com/app/apikey" target="_blank">makersuite.google.com/app/apikey</a>`,
-                validateKey: (key) => /^AIza[a-zA-Z0-9_-]{35}/.test(key),
+                formatHint: 'AIzaSy... (39 characters)',
+                info: {
+                    description: 'Tests Gemini API with flash model',
+                    docs: 'https://makersuite.google.com/app/apikey',
+                    model: 'gemini-1.5-flash'
+                },
+                validateKey: (key) => /^AIza[a-zA-Z0-9_-]{35,39}$/.test(key),
                 headers: (key) => ({
                     'Content-Type': 'application/json'
                 }),
                 body: {
-                    contents: [{ parts: [{ text: 'Say "API key is valid"' }] }]
+                    contents: [{ parts: [{ text: 'Say "Valid"' }] }],
+                    generationConfig: { maxOutputTokens: 5 }
                 },
                 parseSuccess: (data) => ({
-                    model: 'gemini-pro',
-                    response: data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response',
-                    tokens: data.usageMetadata ? `${data.usageMetadata.promptTokenCount} input + ${data.usageMetadata.candidatesTokenCount} output = ${data.usageMetadata.totalTokenCount} total` : 'N/A'
+                    model: 'gemini-1.5-flash',
+                    response: data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || 'No content',
+                    tokens: data.usageMetadata ? `Prompt: ${data.usageMetadata.promptTokenCount} | Candidates: ${data.usageMetadata.candidatesTokenCount} | Total: ${data.usageMetadata.totalTokenCount}` : 'N/A'
                 }),
-                corsNote: false
+                hasCors: true
             },
             groq: {
                 name: 'Groq',
                 url: 'https://api.groq.com/openai/v1/chat/completions',
                 placeholder: 'gsk_xxx...',
-                info: `<strong>Testing:</strong> Fast inference with Llama or Mixtral.<br>
-                       <strong>Get Key:</strong> <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a>`,
-                validateKey: (key) => /^gsk_[a-zA-Z0-9]{52}/.test(key),
+                formatHint: 'gsk_... (52 characters)',
+                info: {
+                    description: 'Fast inference with Llama 3.1',
+                    docs: 'https://console.groq.com/keys',
+                    model: 'llama-3.1-8b-instant'
+                },
+                validateKey: (key) => /^gsk_[a-zA-Z0-9]{52}$/.test(key),
                 headers: (key) => ({
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${key}`
                 }),
                 body: {
-                    model: 'llama3-8b-8192',
-                    messages: [{ role: 'user', content: 'Say "API key is valid"' }],
-                    max_tokens: 10
+                    model: 'llama-3.1-8b-instant',
+                    messages: [{ role: 'user', content: 'Say "Valid"' }],
+                    max_tokens: 5
                 },
                 parseSuccess: (data) => ({
                     model: data.model,
-                    response: data.choices?.[0]?.message?.content || 'No response',
-                    tokens: data.usage ? `${data.usage.prompt_tokens} input + ${data.usage.completion_tokens} output = ${data.usage.total_tokens} total` : 'N/A'
+                    response: data.choices?.[0]?.message?.content?.trim() || 'No content',
+                    tokens: data.usage ? `Prompt: ${data.usage.prompt_tokens} | Completion: ${data.usage.completion_tokens}` : 'N/A'
                 }),
-                corsNote: false
+                hasCors: false
             },
             openrouter: {
                 name: 'OpenRouter',
                 url: 'https://openrouter.ai/api/v1/chat/completions',
                 placeholder: 'sk-or-v1-xxx...',
-                info: `<strong>Testing:</strong> Routes to multiple AI providers.<br>
-                       <strong>Get Key:</strong> <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>`,
-                validateKey: (key) => /^sk-or-v1-[a-zA-Z0-9]{64,}/.test(key),
+                formatHint: 'sk-or-v1-... (64+ characters)',
+                info: {
+                    description: 'Multi-provider routing platform',
+                    docs: 'https://openrouter.ai/keys',
+                    model: 'openai/gpt-3.5-turbo'
+                },
+                validateKey: (key) => /^sk-or-v1-[a-zA-Z0-9]{64,}$/.test(key),
                 headers: (key) => ({
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${key}`,
-                    'HTTP-Referer': window.location.href,
+                    'HTTP-Referer': window.location.origin,
                     'X-Title': 'API Key Tester'
                 }),
                 body: {
                     model: 'openai/gpt-3.5-turbo',
-                    messages: [{ role: 'user', content: 'Say "API key is valid"' }],
-                    max_tokens: 10
+                    messages: [{ role: 'user', content: 'Say "Valid"' }],
+                    max_tokens: 5
                 },
                 parseSuccess: (data) => ({
                     model: data.model,
-                    response: data.choices?.[0]?.message?.content || 'No response',
-                    tokens: data.usage ? `${data.usage.prompt_tokens} input + ${data.usage.completion_tokens} output = ${data.usage.total_tokens} total` : 'N/A'
+                    response: data.choices?.[0]?.message?.content?.trim() || 'No content',
+                    tokens: data.usage ? `Prompt: ${data.usage.prompt_tokens} | Completion: ${data.usage.completion_tokens}` : 'N/A'
                 }),
-                corsNote: false
+                hasCors: false
             },
             cohere: {
                 name: 'Cohere',
-                url: 'https://api.cohere.ai/v1/generate',
+                url: 'https://api.cohere.ai/v1/chat',
                 placeholder: 'Enter your Cohere API key',
-                info: `<strong>Testing:</strong> Text generation with Cohere models.<br>
-                       <strong>Get Key:</strong> <a href="https://dashboard.cohere.com/api-keys" target="_blank">dashboard.cohere.com/api-keys</a>`,
-                validateKey: (key) => key.length > 20,
+                formatHint: 'Free-form (get from dashboard)',
+                info: {
+                    description: 'Chat completion with Command model',
+                    docs: 'https://dashboard.cohere.com/api-keys',
+                    model: 'command-r'
+                },
+                validateKey: (key) => key.length >= 20,
                 headers: (key) => ({
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${key}`
                 }),
                 body: {
-                    prompt: 'Say "API key is valid"',
-                    max_tokens: 10
+                    model: 'command-r',
+                    message: 'Say "Valid"',
+                    max_tokens: 5
                 },
                 parseSuccess: (data) => ({
-                    model: 'command',
-                    response: data.generations?.[0]?.text || 'No response',
+                    model: 'command-r',
+                    response: data.text?.trim() || data.message?.content?.[0]?.text?.trim() || 'No content',
                     tokens: 'N/A'
                 }),
-                corsNote: true
+                hasCors: true
             },
             mistral: {
                 name: 'Mistral AI',
                 url: 'https://api.mistral.ai/v1/chat/completions',
                 placeholder: 'Enter your Mistral API key',
-                info: `<strong>Testing:</strong> Chat completion with Mistral models.<br>
-                       <strong>Get Key:</strong> <a href="https://console.mistral.ai/api-keys" target="_blank">console.mistral.ai/api-keys</a>`,
-                validateKey: (key) => key.length > 20,
+                formatHint: 'Alphanumeric (32+ characters)',
+                info: {
+                    description: 'Chat completion with Mistral Tiny',
+                    docs: 'https://console.mistral.ai/api-keys',
+                    model: 'mistral-tiny'
+                },
+                validateKey: (key) => /^[a-zA-Z0-9]{32,}$/.test(key),
                 headers: (key) => ({
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${key}`
                 }),
                 body: {
                     model: 'mistral-tiny',
-                    messages: [{ role: 'user', content: 'Say "API key is valid"' }],
-                    max_tokens: 10
+                    messages: [{ role: 'user', content: 'Say "Valid"' }],
+                    max_tokens: 5
                 },
                 parseSuccess: (data) => ({
                     model: data.model,
-                    response: data.choices?.[0]?.message?.content || 'No response',
-                    tokens: data.usage ? `${data.usage.prompt_tokens} input + ${data.usage.completion_tokens} output = ${data.usage.total_tokens} total` : 'N/A'
+                    response: data.choices?.[0]?.message?.content?.trim() || 'No content',
+                    tokens: data.usage ? `Prompt: ${data.usage.prompt_tokens} | Completion: ${data.usage.completion_tokens}` : 'N/A'
                 }),
-                corsNote: false
+                hasCors: false
             },
             perplexity: {
                 name: 'Perplexity AI',
                 url: 'https://api.perplexity.ai/chat/completions',
                 placeholder: 'pplx-xxx...',
-                info: `<strong>Testing:</strong> Chat completion with online models.<br>
-                       <strong>Get Key:</strong> <a href="https://www.perplexity.ai/settings/api" target="_blank">perplexity.ai/settings/api</a>`,
-                validateKey: (key) => /^pplx-[a-zA-Z0-9]{40,}/.test(key),
+                formatHint: 'pplx-... (40+ characters)',
+                info: {
+                    description: 'Online LLM with search capabilities',
+                    docs: 'https://www.perplexity.ai/settings/api',
+                    model: 'llama-3.1-sonar-small-128k-online'
+                },
+                validateKey: (key) => /^pplx-[a-zA-Z0-9]{40,}$/.test(key),
                 headers: (key) => ({
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${key}`
                 }),
                 body: {
                     model: 'llama-3.1-sonar-small-128k-online',
-                    messages: [{ role: 'user', content: 'Say "API key is valid"' }],
-                    max_tokens: 10
+                    messages: [{ role: 'user', content: 'Say "Valid"' }],
+                    max_tokens: 5
                 },
                 parseSuccess: (data) => ({
                     model: data.model,
-                    response: data.choices?.[0]?.message?.content || 'No response',
-                    tokens: data.usage ? `${data.usage.prompt_tokens} input + ${data.usage.completion_tokens} output = ${data.usage.total_tokens} total` : 'N/A'
+                    response: data.choices?.[0]?.message?.content?.trim() || 'No content',
+                    tokens: data.usage ? `Prompt: ${data.usage.prompt_tokens} | Completion: ${data.usage.completion_tokens}` : 'N/A'
                 }),
-                corsNote: false
+                hasCors: false
             },
             together: {
                 name: 'Together AI',
                 url: 'https://api.together.xyz/v1/chat/completions',
                 placeholder: 'Enter your Together AI key',
-                info: `<strong>Testing:</strong> Fast inference with open models.<br>
-                       <strong>Get Key:</strong> <a href="https://api.together.xyz/settings/api-keys" target="_blank">api.together.xyz/settings/api-keys</a>`,
-                validateKey: (key) => key.length > 30,
+                formatHint: 'Alphanumeric (50+ characters)',
+                info: {
+                    description: 'Fast inference with open models',
+                    docs: 'https://api.together.xyz/settings/api-keys',
+                    model: 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo'
+                },
+                validateKey: (key) => /^[a-zA-Z0-9]{50,}$/.test(key),
                 headers: (key) => ({
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${key}`
                 }),
                 body: {
-                    model: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
-                    messages: [{ role: 'user', content: 'Say "API key is valid"' }],
-                    max_tokens: 10
+                    model: 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo',
+                    messages: [{ role: 'user', content: 'Say "Valid"' }],
+                    max_tokens: 5
                 },
                 parseSuccess: (data) => ({
                     model: data.model,
-                    response: data.choices?.[0]?.message?.content || 'No response',
-                    tokens: data.usage ? `${data.usage.prompt_tokens} input + ${data.usage.completion_tokens} output = ${data.usage.total_tokens} total` : 'N/A'
+                    response: data.choices?.[0]?.message?.content?.trim() || 'No content',
+                    tokens: data.usage ? `Prompt: ${data.usage.prompt_tokens} | Completion: ${data.usage.completion_tokens}` : 'N/A'
                 }),
-                corsNote: false
+                hasCors: true
             },
             huggingface: {
                 name: 'Hugging Face',
-                url: 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium',
+                url: 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct',
                 placeholder: 'hf_xxx...',
-                info: `<strong>Testing:</strong> Text generation with inference API.<br>
-                       <strong>Get Key:</strong> <a href="https://huggingface.co/settings/tokens" target="_blank">huggingface.co/settings/tokens</a>`,
-                validateKey: (key) => /^hf_[a-zA-Z0-9]{30,}/.test(key),
+                formatHint: 'hf_... (30+ characters)',
+                info: {
+                    description: 'Inference API with Llama 3',
+                    docs: 'https://huggingface.co/settings/tokens',
+                    model: 'meta-llama/Meta-Llama-3-8B-Instruct'
+                },
+                validateKey: (key) => /^hf_[a-zA-Z0-9]{30,}$/.test(key),
                 headers: (key) => ({
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${key}`
                 }),
                 body: {
-                    inputs: 'Say "API key is valid"',
-                    parameters: { max_new_tokens: 10 }
+                    inputs: 'Say "Valid"',
+                    parameters: { max_new_tokens: 5, return_full_text: false }
                 },
                 parseSuccess: (data) => ({
-                    model: 'microsoft/DialoGPT-medium',
-                    response: Array.isArray(data) ? (data[0]?.generated_text || 'No response') : 'No response',
+                    model: 'meta-llama/Meta-Llama-3-8B-Instruct',
+                    response: Array.isArray(data) ? (data[0]?.generated_text?.trim() || 'No content') : 'Unexpected format',
                     tokens: 'N/A'
                 }),
-                corsNote: true
+                hasCors: true
             }
         };
 
-        // DOM elements
-        const providerSelect = document.getElementById('provider');
-        const apiKeyInput = document.getElementById('apiKey');
-        const toggleVisibilityBtn = document.getElementById('toggleVisibility');
-        const validationFeedback = document.getElementById('validationFeedback');
-        const providerInfo = document.getElementById('providerInfo');
-        const testButton = document.getElementById('testButton');
-        const resultContainer = document.getElementById('resultContainer');
-        const form = document.getElementById('testerForm');
+        // DOM Elements
+        const elements = {
+            provider: document.getElementById('provider'),
+            apiKey: document.getElementById('apiKey'),
+            toggleVisibility: document.getElementById('toggleVisibility'),
+            validationFeedback: document.getElementById('validationFeedback'),
+            providerInfo: document.getElementById('providerInfo'),
+            keyFormatHint: document.getElementById('keyFormatHint'),
+            testButton: document.getElementById('testButton'),
+            resultContainer: document.getElementById('resultContainer'),
+            form: document.getElementById('testerForm'),
+            toastContainer: document.getElementById('toastContainer')
+        };
 
-        // Utility function to escape HTML
+        // Utility: Show toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-amber-500',
+                info: 'bg-blue-500'
+            };
+            
+            toast.className = `${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 transform transition-all duration-300 translate-y-0 opacity-100`;
+            toast.innerHTML = `
+                <i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'alert-circle'}" class="w-5 h-5"></i>
+                <span class="text-sm font-medium">${message}</span>
+            `;
+            
+            elements.toastContainer.appendChild(toast);
+            lucide.createIcons();
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(20px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Utility: Escape HTML
         function escapeHtml(text) {
+            if (!text) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
+        // Utility: Copy to clipboard
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast('Copied to clipboard!', 'success');
+            } catch (err) {
+                showToast('Failed to copy', 'error');
+            }
+        }
+
         // Toggle password visibility
-        toggleVisibilityBtn.addEventListener('click', () => {
-            const type = apiKeyInput.type === 'password' ? 'text' : 'password';
-            apiKeyInput.type = type;
-            toggleVisibilityBtn.textContent = type === 'password' ? '👁️' : '🙈';
+        elements.toggleVisibility.addEventListener('click', () => {
+            const isPassword = elements.apiKey.type === 'password';
+            elements.apiKey.type = isPassword ? 'text' : 'password';
+            
+            // Update icon
+            elements.toggleVisibility.innerHTML = isPassword ? 
+                '<i data-lucide="eye-off" class="w-5 h-5"></i>' : 
+                '<i data-lucide="eye" class="w-5 h-5"></i>';
+            lucide.createIcons();
         });
 
         // Provider change handler
-        providerSelect.addEventListener('change', (e) => {
+        elements.provider.addEventListener('change', (e) => {
             const providerKey = e.target.value;
-            apiKeyInput.value = '';
-            validationFeedback.innerHTML = '';
-            resultContainer.innerHTML = '';
+            elements.apiKey.value = '';
+            elements.validationFeedback.classList.add('hidden');
+            elements.resultContainer.innerHTML = '';
             
             if (providerKey && providers[providerKey]) {
                 const provider = providers[providerKey];
-                apiKeyInput.placeholder = provider.placeholder;
-                providerInfo.innerHTML = `<div class="provider-info">${provider.info}</div>`;
+                elements.apiKey.placeholder = provider.placeholder;
+                
+                // Show provider info
+                elements.providerInfo.classList.remove('hidden');
+                elements.providerInfo.innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <i data-lucide="info" class="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0"></i>
+                        <div class="space-y-1">
+                            <p><strong>Testing:</strong> ${provider.info.description}</p>
+                            <p><strong>Model:</strong> ${provider.info.model}</p>
+                            <p><strong>Get Key:</strong> <a href="${provider.info.docs}" target="_blank" class="text-blue-600 hover:underline inline-flex items-center gap-1">${provider.info.docs} <i data-lucide="external-link" class="w-3 h-3"></i></a></p>
+                            ${provider.hasCors ? '<p class="text-amber-600 text-xs"><i data-lucide="alert-triangle" class="w-3 h-3 inline mr-1"></i> May have CORS restrictions in browser</p>' : ''}
+                        </div>
+                    </div>
+                `;
+                
+                // Show format hint
+                elements.keyFormatHint.classList.remove('hidden');
+                elements.keyFormatHint.querySelector('span').textContent = provider.formatHint;
+                
+                lucide.createIcons();
             } else {
-                apiKeyInput.placeholder = 'Enter your API key...';
-                providerInfo.innerHTML = '';
+                elements.providerInfo.classList.add('hidden');
+                elements.keyFormatHint.classList.add('hidden');
+                elements.apiKey.placeholder = 'Enter your API key...';
             }
         });
 
         // Real-time validation
-        apiKeyInput.addEventListener('input', () => {
-            const providerKey = providerSelect.value;
-            const apiKey = apiKeyInput.value.trim();
+        elements.apiKey.addEventListener('input', () => {
+            const providerKey = elements.provider.value;
+            const apiKey = elements.apiKey.value.trim();
             
             if (!providerKey || !apiKey) {
-                validationFeedback.innerHTML = '';
+                elements.validationFeedback.classList.add('hidden');
                 return;
             }
-
+            
             const provider = providers[providerKey];
             const isValid = provider.validateKey(apiKey);
-
+            
+            elements.validationFeedback.classList.remove('hidden');
             if (isValid) {
-                validationFeedback.innerHTML = `
-                    <div class="validation-feedback success">
-                        ✅ Format looks correct
+                elements.validationFeedback.innerHTML = `
+                    <div class="flex items-center gap-2 text-green-600">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        <span>Format appears valid</span>
                     </div>
                 `;
             } else {
-                validationFeedback.innerHTML = `
-                    <div class="validation-feedback warning">
-                        ⚠️ Format doesn't match expected pattern
+                elements.validationFeedback.innerHTML = `
+                    <div class="flex items-center gap-2 text-amber-600">
+                        <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                        <span>Format doesn't match expected pattern</span>
                     </div>
                 `;
             }
+            lucide.createIcons();
         });
 
         // Show success result
-        function showSuccess(providerName, details) {
-            resultContainer.innerHTML = `
-                <div class="result-card success">
-                    <div class="result-header">
-                        <span class="result-icon">✅</span>
-                        <span class="result-title">${providerName}</span>
-                        <span class="status-badge active">Active & Working</span>
+        function showSuccess(providerName, details, key) {
+            const resultCard = document.createElement('div');
+            resultCard.className = 'fade-in bg-green-50 border-2 border-green-200 rounded-xl p-5';
+            
+            resultCard.innerHTML = `
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-green-100 p-2 rounded-full">
+                            <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-green-900">${providerName}</h3>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-200 text-green-800">
+                                Active & Working
+                            </span>
+                        </div>
                     </div>
-                    <div class="result-details">
-                        <div class="detail-row">
-                            <span class="detail-label">Status:</span>
-                            <span class="detail-value">✅ API Key is valid and working!</span>
+                    <button onclick="copyToClipboard('${escapeHtml(key)}')" class="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-white/50 transition-colors" title="Copy key">
+                        <i data-lucide="copy" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-3 text-sm">
+                    <div class="bg-white/60 rounded-lg p-3">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-semibold text-green-800">Model Used</span>
                         </div>
-                        ${details.model ? `
-                        <div class="detail-row">
-                            <span class="detail-label">Model:</span>
-                            <span class="detail-value">${escapeHtml(details.model)}</span>
-                        </div>
-                        ` : ''}
-                        ${details.response ? `
-                        <div class="detail-row">
-                            <span class="detail-label">Response:</span>
-                            <span class="detail-value">${escapeHtml(details.response)}</span>
-                        </div>
-                        ` : ''}
-                        ${details.tokens ? `
-                        <div class="detail-row">
-                            <span class="detail-label">Tokens:</span>
-                            <span class="detail-value">${escapeHtml(details.tokens)}</span>
-                        </div>
-                        ` : ''}
-                        ${details.stopReason ? `
-                        <div class="detail-row">
-                            <span class="detail-label">Stop Reason:</span>
-                            <span class="detail-value">${escapeHtml(details.stopReason)}</span>
-                        </div>
-                        ` : ''}
+                        <code class="text-green-700 bg-green-100 px-2 py-1 rounded text-xs">${escapeHtml(details.model)}</code>
                     </div>
+                    
+                    <div class="bg-white/60 rounded-lg p-3">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-semibold text-green-800">Response</span>
+                        </div>
+                        <div class="text-green-700 font-medium">${escapeHtml(details.response)}</div>
+                    </div>
+                    
+                    ${details.tokens !== 'N/A' ? `
+                    <div class="bg-white/60 rounded-lg p-3">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-semibold text-green-800">Token Usage</span>
+                        </div>
+                        <div class="text-green-700 text-xs">${escapeHtml(details.tokens)}</div>
+                    </div>
+                    ` : ''}
+                    
+                    ${details.stopReason ? `
+                    <div class="bg-white/60 rounded-lg p-3">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-semibold text-green-800">Stop Reason</span>
+                        </div>
+                        <div class="text-green-700 text-xs">${escapeHtml(details.stopReason)}</div>
+                    </div>
+                    ` : ''}
                 </div>
             `;
+            
+            elements.resultContainer.innerHTML = '';
+            elements.resultContainer.appendChild(resultCard);
+            lucide.createIcons();
         }
 
         // Show error result
         function showError(providerName, errorType, details) {
-            resultContainer.innerHTML = `
-                <div class="result-card error">
-                    <div class="result-header">
-                        <span class="result-icon">❌</span>
-                        <span class="result-title">${providerName}</span>
-                        <span class="status-badge inactive">Not Working</span>
+            const resultCard = document.createElement('div');
+            resultCard.className = 'fade-in bg-red-50 border-2 border-red-200 rounded-xl p-5';
+            
+            const isCorsError = details.message && (details.message.includes('Failed to fetch') || details.message.includes('CORS'));
+            
+            resultCard.innerHTML = `
+                <div class="flex items-start gap-3 mb-4">
+                    <div class="bg-red-100 p-2 rounded-full flex-shrink-0">
+                        <i data-lucide="x-circle" class="w-6 h-6 text-red-600"></i>
                     </div>
-                    <div class="result-details">
-                        <div class="detail-row">
-                            <span class="detail-label">Error Type:</span>
-                            <span class="detail-value">${escapeHtml(errorType)}</span>
+                    <div>
+                        <h3 class="font-bold text-red-900">${providerName}</h3>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-200 text-red-800">
+                            ${isCorsError ? 'CORS / Network Error' : 'Invalid / Error'}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="space-y-3 text-sm">
+                    <div class="bg-white/60 rounded-lg p-3">
+                        <span class="font-semibold text-red-800 block mb-1">Error Type</span>
+                        <span class="text-red-700">${escapeHtml(errorType)}</span>
+                    </div>
+                    
+                    ${details.status ? `
+                    <div class="bg-white/60 rounded-lg p-3">
+                        <span class="font-semibold text-red-800 block mb-1">Status Code</span>
+                        <span class="text-red-700 font-mono">${escapeHtml(String(details.status))}</span>
+                    </div>
+                    ` : ''}
+                    
+                    ${details.message ? `
+                    <div class="bg-white/60 rounded-lg p-3">
+                        <span class="font-semibold text-red-800 block mb-1">Message</span>
+                        <span class="text-red-700 text-xs break-words">${escapeHtml(details.message)}</span>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                        <div class="flex items-start gap-2">
+                            <i data-lucide="lightbulb" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                            <div class="text-amber-800 text-xs leading-relaxed">
+                                <strong>Suggestion:</strong> ${escapeHtml(details.nextSteps)}
+                                ${isCorsError ? '<br><br><strong>Note:</strong> Many AI providers block browser requests. Try testing from a server environment or use a CORS proxy for development.' : ''}
+                            </div>
                         </div>
-                        ${details.status ? `
-                        <div class="detail-row">
-                            <span class="detail-label">Status Code:</span>
-                            <span class="detail-value">${escapeHtml(details.status)}</span>
-                        </div>
-                        ` : ''}
-                        ${details.message ? `
-                        <div class="detail-row">
-                            <span class="detail-label">Message:</span>
-                            <span class="detail-value">${escapeHtml(details.message)}</span>
-                        </div>
-                        ` : ''}
-                        ${details.nextSteps ? `
-                        <div class="detail-row">
-                            <span class="detail-label">Next Steps:</span>
-                            <span class="detail-value">${details.nextSteps}</span>
-                        </div>
-                        ` : ''}
                     </div>
                 </div>
             `;
-        }
-
-        // Show warning result
-        function showWarning(providerName, message, details) {
-            resultContainer.innerHTML = `
-                <div class="result-card warning">
-                    <div class="result-header">
-                        <span class="result-icon">⚠️</span>
-                        <span class="result-title">${providerName}</span>
-                    </div>
-                    <div class="result-details">
-                        <div class="detail-row">
-                            <span class="detail-label">Warning:</span>
-                            <span class="detail-value">${message}</span>
-                        </div>
-                        ${details ? `
-                        <div class="detail-row">
-                            <span class="detail-value">${details}</span>
-                        </div>
-                        ` : ''}
-                    </div>
-                </div>
-            `;
+            
+            elements.resultContainer.innerHTML = '';
+            elements.resultContainer.appendChild(resultCard);
+            lucide.createIcons();
         }
 
         // Test API key
@@ -827,107 +769,117 @@
             const url = typeof provider.url === 'function' ? provider.url(apiKey) : provider.url;
             const headers = provider.headers(apiKey);
             const body = provider.body;
-
+            
             try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+                
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: headers,
-                    body: JSON.stringify(body)
+                    body: JSON.stringify(body),
+                    signal: controller.signal,
+                    mode: 'cors'
                 });
-
+                
+                clearTimeout(timeoutId);
                 const data = await response.json();
-
-                // Handle successful response
+                
                 if (response.ok) {
                     const details = provider.parseSuccess(data);
-                    showSuccess(provider.name, details);
-                    return;
-                }
-
-                // Handle error responses
-                let errorType = 'Unknown Error';
-                let errorDetails = {
-                    status: response.status,
-                    message: data.error?.message || data.message || JSON.stringify(data).substring(0, 200),
-                    nextSteps: ''
-                };
-
-                if (response.status === 401) {
-                    errorType = 'Invalid or Unauthorized API Key';
-                    errorDetails.nextSteps = 'Please check that your API key is correct and has not expired.';
-                } else if (response.status === 403) {
-                    errorType = 'Permission Denied';
-                    errorDetails.nextSteps = 'Your API key may not have permission to access this endpoint. Check your account settings.';
-                } else if (response.status === 404) {
-                    errorType = 'Endpoint Not Found';
-                    errorDetails.nextSteps = 'The API endpoint may have changed. Please report this issue.';
-                } else if (response.status === 429) {
-                    errorType = 'Rate Limit or Quota Exceeded';
-                    errorDetails.nextSteps = 'You have exceeded your rate limit or quota. Wait a moment and try again, or upgrade your plan.';
-                } else if (response.status >= 500) {
-                    errorType = 'Server Error';
-                    errorDetails.nextSteps = `${provider.name} is experiencing server issues. Try again later.`;
+                    showSuccess(provider.name, details, apiKey);
+                    showToast('API Key is valid!', 'success');
                 } else {
-                    errorType = `HTTP ${response.status} Error`;
-                }
-
-                showError(provider.name, errorType, errorDetails);
-
-            } catch (error) {
-                // Handle network errors and CORS issues
-                if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-                    if (provider.corsNote) {
-                        showWarning(
-                            provider.name,
-                            'CORS Error Detected',
-                            `This API doesn't allow direct browser requests due to CORS (Cross-Origin Resource Sharing) restrictions. Your API key may still be valid, but it can only be tested from a server environment or with a CORS proxy. The key format appears ${apiKeyInput.value.trim() && provider.validateKey(apiKeyInput.value.trim()) ? 'correct' : 'incorrect'}.`
-                        );
-                    } else {
-                        showError(provider.name, 'Network Error', {
-                            message: error.message,
-                            nextSteps: 'Check your internet connection or try again later. This could also be a CORS issue.'
-                        });
+                    let errorType = 'API Error';
+                    let errorDetails = {
+                        status: response.status,
+                        message: data.error?.message || data.message || JSON.stringify(data),
+                        nextSteps: 'Check your API key and try again.'
+                    };
+                    
+                    if (response.status === 401) {
+                        errorType = 'Invalid API Key';
+                        errorDetails.nextSteps = 'Your API key is invalid or has been revoked. Generate a new key from the provider dashboard.';
+                    } else if (response.status === 403) {
+                        errorType = 'Permission Denied';
+                        errorDetails.nextSteps = 'Your key lacks permission for this operation. Check your subscription plan and API permissions.';
+                    } else if (response.status === 429) {
+                        errorType = 'Rate Limit Exceeded';
+                        errorDetails.nextSteps = 'You have hit the rate limit. Wait a few minutes and try again, or upgrade your plan.';
+                    } else if (response.status === 404) {
+                        errorType = 'Model Not Found';
+                        errorDetails.nextSteps = 'The model specified in the test may not be available. Check provider documentation for available models.';
+                    } else if (response.status >= 500) {
+                        errorType = 'Provider Server Error';
+                        errorDetails.nextSteps = 'The provider is experiencing issues. Try again later.';
                     }
-                } else {
-                    showError(provider.name, 'Request Failed', {
-                        message: error.message,
-                        nextSteps: 'An unexpected error occurred. Please try again.'
-                    });
+                    
+                    showError(provider.name, errorType, errorDetails);
+                    showToast('API test failed', 'error');
                 }
+            } catch (error) {
+                let errorType = 'Network Error';
+                let message = error.message || 'Unknown error';
+                let nextSteps = 'Check your internet connection and try again.';
+                
+                if (error.name === 'AbortError') {
+                    errorType = 'Request Timeout';
+                    message = 'Request took too long to respond';
+                    nextSteps = 'The provider API may be slow or unavailable. Try again later.';
+                } else if (message.includes('Failed to fetch') || message.includes('NetworkError') || message.includes('CORS')) {
+                    errorType = 'CORS / Network Blocked';
+                    message = 'Browser blocked the request due to CORS policy or network error';
+                    nextSteps = 'Most AI providers require server-side requests. This error often means the key format is correct but the provider blocks browser JavaScript requests for security.';
+                }
+                
+                showError(provider.name, errorType, {
+                    status: null,
+                    message: message,
+                    nextSteps: nextSteps
+                });
+                showToast('Connection failed', 'error');
             }
         }
 
         // Form submission
-        form.addEventListener('submit', async (e) => {
+        elements.form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const providerKey = providerSelect.value;
-            const apiKey = apiKeyInput.value.trim();
-
+            const providerKey = elements.provider.value;
+            const apiKey = elements.apiKey.value.trim();
+            
             if (!providerKey || !apiKey) {
+                showToast('Please fill in all fields', 'warning');
                 return;
             }
-
-            // Disable button and show loading state
-            testButton.disabled = true;
-            testButton.innerHTML = '<div class="spinner"></div> Testing...';
-            resultContainer.innerHTML = '';
-
+            
+            // Show loading state
+            elements.testButton.disabled = true;
+            elements.testButton.innerHTML = `
+                <div class="spinner w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                <span>Testing...</span>
+            `;
+            elements.resultContainer.innerHTML = '';
+            
             try {
                 await testApiKey(providerKey, apiKey);
             } finally {
-                // Re-enable button
-                testButton.disabled = false;
-                testButton.innerHTML = 'Test API Key';
+                // Reset button
+                elements.testButton.disabled = false;
+                elements.testButton.innerHTML = `
+                    <i data-lucide="check-circle" class="w-5 h-5"></i>
+                    <span>Test API Key</span>
+                `;
+                lucide.createIcons();
             }
         });
 
-        // Allow Enter key to submit
-        apiKeyInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                form.dispatchEvent(new Event('submit'));
-            }
-        });
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Expose copy function globally
+        window.copyToClipboard = copyToClipboard;
     </script>
+<script src="https://deepsite.hf.co/deepsite-badge.js"></script>
 </body>
 </html>
